@@ -717,6 +717,7 @@ export class Manifest {
         config.draftPullRequest ?? this.draftPullRequest,
         this.labels
       );
+      // something here
       if (releasePullRequest) {
         // Update manifest, but only for valid release version - this will skip SNAPSHOT from java strategy
         if (
