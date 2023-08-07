@@ -30,6 +30,7 @@ import {
 } from '../factory';
 import {Bootstrapper} from '../bootstrapper';
 import {createPatch} from 'diff';
+import * as fs from 'fs';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const parseGithubRepoUrl = require('parse-github-repo-url');
@@ -255,7 +256,7 @@ function pullRequestOptions(yargs: yargs.Argv): yargs.Argv {
       type: 'string',
     });
 }
-
+// check this out
 function pullRequestStrategyOptions(yargs: yargs.Argv): yargs.Argv {
   return yargs
     .option('release-as', {
@@ -477,6 +478,7 @@ const createReleasePullRequestCommand: yargs.CommandModule<
     }
 
     if (argv.dryRun) {
+      const patchFile = fs.createWriteStream('patch.diff');
       const pullRequests = await manifest.buildPullRequests();
       console.log(`Would open ${pullRequests.length} pull requests`);
       console.log('fork:', manifest.fork);
@@ -486,16 +488,18 @@ const createReleasePullRequestCommand: yargs.CommandModule<
         console.log('draft:', pullRequest.draft);
         console.log('body:', pullRequest.body.toString());
         console.log('updates:', pullRequest.updates.length);
+        fs.writeFileSync('pr.json', JSON.stringify(pullRequest, null, 2));
         const changes = await github.buildChangeSet(
           pullRequest.updates,
           targetBranch
         );
         for (const update of pullRequest.updates) {
-          console.log(
-            `  ${update.path}: `,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (update.updater as any).constructor
-          );
+          // console.log(
+          //   `  ${update.path}: `,
+          //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          //   (update.updater as any).constructor
+          // );
+          // output patch to file
           if (argv.trace) {
             const change = changes.get(update.path);
             if (change) {
@@ -505,12 +509,15 @@ const createReleasePullRequestCommand: yargs.CommandModule<
                 change.content || ''
               );
               console.log(patch);
+              patchFile.write(patch);
+              patchFile.write('\n');
             } else {
               console.warn(`no change found for ${update.path}`);
             }
           }
         }
       }
+      patchFile.close();
     } else {
       const pullRequestNumbers = await manifest.createPullRequests();
       console.log(pullRequestNumbers);
