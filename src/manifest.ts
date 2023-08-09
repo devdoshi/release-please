@@ -951,6 +951,8 @@ export class Manifest {
     const message = this.signoffUser
       ? signoffCommitMessage(pullRequest.title.toString(), this.signoffUser)
       : pullRequest.title.toString();
+
+    this.logger.info(`devdoshi ${pullRequest.headRefName}`);
     const newPullRequest = await this.github.createPullRequest(
       {
         headBranchName: pullRequest.headRefName,
