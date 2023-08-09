@@ -1116,6 +1116,12 @@ export class GitHub {
       updates: Update[],
       options?: CreatePullRequestOptions
     ): Promise<PullRequest> => {
+      console.log(
+        'asdfasdf',
+        pullRequest.baseBranchName,
+        pullRequest.headBranchName,
+        targetBranch
+      );
       //  Update the files for the release if not already supplied
       const changes = await this.buildChangeSet(updates, targetBranch);
       const prNumber = await createPullRequest(this.octokit, changes, {
