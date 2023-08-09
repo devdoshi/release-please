@@ -961,7 +961,7 @@ export class Manifest {
         labels: this.skipLabeling ? [] : pullRequest.labels,
         files: [],
       },
-      this.targetBranch,
+      'main',
       message,
       pullRequest.updates,
       {
