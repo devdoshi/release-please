@@ -954,7 +954,7 @@ export class Manifest {
     const newPullRequest = await this.github.createPullRequest(
       {
         headBranchName: pullRequest.headRefName,
-        baseBranchName: this.targetBranch,
+        baseBranchName: 'main',
         number: -1,
         title: pullRequest.title.toString(),
         body,
