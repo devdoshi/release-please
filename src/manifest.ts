@@ -862,7 +862,7 @@ export class Manifest {
     this.logger.info('Looking for open release pull requests');
     const openPullRequests: PullRequest[] = [];
     const generator = this.github.pullRequestIterator(
-      this.targetBranch,
+      'main',
       'OPEN',
       Number.MAX_SAFE_INTEGER,
       false
